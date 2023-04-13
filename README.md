@@ -8,7 +8,17 @@
 - [Screenshot](#sc)
 - [Cite sources](#sources)
 
-## Install(#install)
+## Install[](#install)
+Requirements
+- python 3.x
+- Pygame library
+
+open _Terminal_ take these steps:
+```bash
+# This to install pygame
+pip install pygame
+```
+
 
 ## Movivation[](#motivation)
 My purpose for making this game is my memories of playing this game with my friends in school, and I want to build this game because I think this is a more manageable size game since this is my first game. Also I think this will be a good project because it will show my comprehension of pygame.
