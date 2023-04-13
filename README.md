@@ -14,11 +14,26 @@ Requirements
 - Pygame library
 
 open _Terminal_ take these steps:
+1.
 ```bash
 # This to install pygame
 pip install pygame
 ```
-
+2. 
+```bash
+# Clone the respository to your local machine
+git clone https://github.com/Robison-Alex/space_invade.git
+```
+3.
+```bash
+# Change into the right directory
+cd space_invader
+```
+4.
+```bash
+# Run the game 
+python Space_invader.py
+```
 
 ## Movivation[](#motivation)
 My purpose for making this game is my memories of playing this game with my friends in school, and I want to build this game because I think this is a more manageable size game since this is my first game. Also I think this will be a good project because it will show my comprehension of pygame.
