@@ -219,7 +219,7 @@ class Enemy(Ship):
         self.y += vel
 
 # Class for power-ups on the screen
-class power_up_icon(Ship):
+class PowerUp(Ship):
     POWER_UP = {
         "bomb": (POWER_UP_BOMB),
         "doubleshot": (POWER_UP_DOUBLESHOT),
@@ -301,7 +301,7 @@ def main():
         if len(enemies) == 0:
             level += 1
             check = random.choice(["bomb","doubleshot","speed","life"])
-            power = power_up_icon(random.randrange(-70, width-120), random.randrange(0,700), check)
+            power = PowerUp(random.randrange(-70, width-120), random.randrange(0,700), check)
             
             power_up.append(power)
             wave_length += 5
