@@ -28,9 +28,14 @@ git clone https://github.com/Robison-Alex/space_invade.git
 step 3.
 ```bash
 # Change into the right directory
-cd space_invader
+cd space_invade
 ```
 step 4.
+```bash
+# Change into the right directory
+cd space_invader
+```
+step 5.
 ```bash
 # Run the game 
 python Space_invader.py
