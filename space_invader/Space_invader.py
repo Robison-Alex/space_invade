@@ -47,24 +47,27 @@ pygame.mixer.music.play()
 
 # Class bomb
 class Bomb():
-    def __init__(self, x, y, img):
+    def __init__(self, x, y , img):
         self.x = x
         self.y = y
         self.img = img
         self.mask = pygame.mask.from_surface(self.img)
 
+    # Draws the bomb
     def draw(self, window):
-        window.blit(self.img, (self.x, self.y))
+        window.blit(self.img,(self.x,self.y))
 
+    # Move the bomb 
     def move(self, val):
         self.y += val
 
-    def off_screen(self, height):
-        return not (self.y <= height and self.y >= 0)
-    
+    # Check if bomb goes off the screen    
+    def off_screen(self,height):
+        return not(self.y <= height and self.y >= 0)
+
+    # Call collide to see if laser over laped a enemy
     def collision(self, obj):
         return collide(self, obj)
- 
 
 
 # Create a class for the laser
@@ -75,17 +78,23 @@ class Laser:
         self.img = img
         self.mask = pygame.mask.from_surface(self.img)
 
+    # Draws the laser
     def draw(self, window):
         window.blit(self.img,(self.x,self.y))
 
+    # Move the laser 
     def move(self, val):
         self.y += val
 
+    # Check if laser goes off the screen    
     def off_screen(self,height):
         return not(self.y <= height and self.y >= 0)
 
+    # Call collide to see if laser over laped a enemy
     def collision(self, obj):
         return collide(self, obj)
+
+
 
 class Ship:
     COOLDOWN = 20
@@ -99,8 +108,7 @@ class Ship:
         self.cool_down_timer = 0
         self.true = True
         
-        
-
+    # Draw bomb and lasers
     def draw(self, window):
         window.blit(self.ship_img,(self.x, self.y))
         for bomb in self.power_up:
@@ -109,16 +117,19 @@ class Ship:
         for laser in self.lasers:
             laser.draw(window)
     
+    # Cooldown counter
     def cooldown(self):
         if self.cool_down_timer > 0:
             self.cool_down_timer -= 1
-
+    
+    # Shoot a laser
     def shoot(self):
         if self.cool_down_timer == 0:
             laser = Laser(self.x+52, self.y+50, self.laser_img)
             self.lasers.append(laser)
             self.cool_down_timer = self.COOLDOWN
     
+    # Power-up for doubleshot
     def double_shoot(self):
         if self.true:
             laser1 = Laser(self.x+30, self.y+50, self.laser_img)
@@ -126,6 +137,7 @@ class Ship:
             self.lasers.append(laser1)
             self.lasers.append(laser2)
 
+    # checks cooldown and 
     def bomb_shoot(self):
         if self.cool_down_timer == 0:
             bomb = Bomb(self.x, self.y, self.bomb_img)
@@ -133,24 +145,19 @@ class Ship:
             self.cool_down_timer = self.COOLDOWN
 
 
-    def get_width(self):
-        return self.ship_img.get_width()
-
-    def get_height(self):
-        return self.ship_img.get_height()
-
+# Player class
 class Player(Ship):
     def __init__(self, x, y, point=0):
         super().__init__(x, y, point)
         self.ship_img = player_ship
         self.laser_img = YELLOW_LASER
-
         self.bomb_img = THROWABLE_BOMB
         self.mask = pygame.mask.from_surface(self.ship_img)
         self.lives = 3
         self.heart_imgs = [player_heart] * self.lives
         self.total_points = point
 
+    # Laser bomb and checks if it collides with enemies
     def move_lasers(self,vel, objs):
         self.cooldown()
         for laser in self.lasers:
@@ -164,7 +171,8 @@ class Player(Ship):
                         if laser in self.lasers:
                             self.lasers.remove(laser)
                             self.points += 50
-
+    
+    # Moves bomb and checks if it collides with enemies
     def move_bomb(self,vel, objs):
         for bomb in self.power_up:
             bomb.move(vel)
@@ -178,32 +186,34 @@ class Player(Ship):
                             self.power_up.remove(bomb)
                             self.points += 50
 
-
-    def draw_lives(self, window):
-        
+    # Draws players stats
+    def draw_stats(self, window):
+        font = pygame.font.Font(None, 30)
+        score_text = font.render(f"Points: {self.points}", True, (255, 255, 255))
+        window.blit(score_text, (10, 10))
         for i in range(self.lives):
             j = 60 * i
             window.blit(self.heart_imgs[i],(600,-60 +j))
 
+    # If lives need to be removed it will take off on screen and on the live counter
     def remove_lives(self):
         self.lives -= 1
         self.heart_imgs.pop()
-
+    
+    # If lives need to be added it will draw on the screen and on the live counter
     def add_lives(self):
         self.lives += 1
         self.heart_imgs.append(player_heart)
 
+    # Will update Player and stats
     def draw(self, window):
         super().draw(window)
-        self.point(window)
-        self.draw_lives(window)
+        self.draw_stats(window)
 
-    def point(self, window):
-        font = pygame.font.Font(None, 30)
-        score_text = font.render(f"Points: {self.points}", True, (255, 255, 255))
-        window.blit(score_text, (10, 10))
+    
 
 class Enemy(Ship):
+    # List of names and ship imgs 
     COLOR_MAP = {
                 "red": (RED_SPACE_SHIP),
                 "pink": (PINK_SPACE_SHIP),
@@ -215,11 +225,14 @@ class Enemy(Ship):
         self.ship_img= self.COLOR_MAP[color]
         self.mask = pygame.mask.from_surface(self.ship_img)
 
+    # Movement speed
     def move(self, vel):
         self.y += vel
 
 # Class for power-ups on the screen
-class PowerUp(Ship):
+class power_up_icon(Ship):
+    
+    # List of names and power-ups imgs 
     POWER_UP = {
         "bomb": (POWER_UP_BOMB),
         "doubleshot": (POWER_UP_DOUBLESHOT),
@@ -233,11 +246,11 @@ class PowerUp(Ship):
         self.ship_img = self.POWER_UP[power_up]
         self.mask = pygame.mask.from_surface(self.ship_img)
         
-
+# Check x and y of obj1-2 if they over lap
 def collide(obj1, obj2):
     offset_x = obj1.x - obj2.x
     offset_y = obj1.y - obj2.y
-    return obj2.mask.overlap(obj1.mask, (offset_x, offset_y)) is not None
+    return obj2.mask.overlap(obj1.mask, (offset_x, offset_y)) != None
 
 def main():
     run = True
@@ -273,15 +286,18 @@ def main():
     def redraw_window():
         screen.blit(BG, (0,0))
 
+        # Draws the enemies 
         for enemy in enemies:
             enemy.draw(screen)
 
+        # Draws the power-ups
         for power in power_up:
             power.draw(screen)
         
+        # Draws player
         player.draw(screen)
         
-
+        # Check if lost
         if lives == 0:
             lost_label = lost_font.render("You Lost!!", 1, (255,255,255))
             screen.blit(lost_label, (width/2 - lost_label.get_width()/2, 350))
@@ -290,21 +306,27 @@ def main():
         pygame.display.update()
     while run:
         clock.tick(FPS)
+        
+        # Redraw the background
         redraw_window()
-         
+        
+        # Check if lives = 0
         if lives == 0:
             lost = True
             pygame.time.wait(2000)
             if lost:
                 run = False
 
+        # When all enemies are destroyed then a new power up will spawn
         if len(enemies) == 0:
             level += 1
             check = random.choice(["bomb","doubleshot","speed","life"])
-            power = PowerUp(random.randrange(-70, width-120), random.randrange(0,700), check)
+            power = power_up_icon(random.randrange(-70, width-120), random.randrange(0,700), check)
             
             power_up.append(power)
             wave_length += 5
+
+            # Spawe in new enimies in a wave
             for i in range(wave_length):
                 enemy = Enemy(random.randrange(-70, width-120), random.randrange(-1000, -100), random.choice(["red", "blue", "pink"]))
                 enemies.append(enemy)
@@ -312,7 +334,8 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 quit()
-
+        
+        # Player movement 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_a] and player.x - player_vel > -70: # left
             player.x -= player_vel
@@ -322,6 +345,8 @@ def main():
             player.y -= player_vel
         if keys[pygame.K_s] and player.y + player_vel + 15 < height-120: # down
             player.y += player_vel
+
+        # Player shooting and other power-up keys
         if keys[pygame.K_q]:
             if power_check_ != []:
                 if power_check_[0:] == "bomb":
@@ -331,7 +356,6 @@ def main():
         if keys[pygame.K_SPACE]:
             player.shoot()
         if keys[pygame.K_e]:
-            
             if ammo >= 0:
                 if power_check_[0:] == "doubleshot":
                     player.double_shoot()
@@ -340,7 +364,7 @@ def main():
                         power_check_ = power_check_[1:]
                         ammo = 10
             
-        
+        # Check if enemies location collides with players
         for enemy in enemies[:]:
             enemy.move(enemy_vel)
             if collide(enemy, player):
@@ -354,6 +378,8 @@ def main():
                     player.remove_lives()
                     player_vel = 5
                     enemies.remove(enemy)
+            
+            # Check if power_up location collides with players
             for power in power_up[:]:
                 if collide(power, player):
                     power_check_ = check
@@ -364,7 +390,7 @@ def main():
                         player_vel += 5
                     power_up.remove(power)
                 
-
+        # Move the lasers with also check if they collide 
         player.move_lasers(-laser_vel, enemies)
         player.move_bomb(-laser_vel, enemies)
 
