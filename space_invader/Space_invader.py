@@ -137,7 +137,7 @@ class Ship:
             self.lasers.append(laser1)
             self.lasers.append(laser2)
 
-    # checks cooldown and 
+    # checks cooldown and call bomb
     def bomb_shoot(self):
         if self.cool_down_timer == 0:
             bomb = Bomb(self.x, self.y, self.bomb_img)
@@ -282,7 +282,7 @@ def main():
 
     
     
-
+    # Updates the screen for enemies, power ups and player 
     def redraw_window():
         screen.blit(BG, (0,0))
 
